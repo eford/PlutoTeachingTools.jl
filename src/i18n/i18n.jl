@@ -5,10 +5,14 @@ abstract type AbstractLanguage end
 # computational_thinking.jl
 hint_str(lang::Lang) where {Lang <: AbstractLanguage} = @error "Please define a translation."
 tip_str(lang::Lang) where {Lang <: AbstractLanguage} = @error "Please define a translation."
+answer_invite_str(lang::Lang) where {Lang <: AbstractLanguage} = @error "Please define a translation."
+answer_boxlabel_str(lang::Lang) where {Lang <: AbstractLanguage} = @error "Please define a translation."
 protip_invite_str(lang::Lang) where {Lang <: AbstractLanguage} = @error "Please define a translation."
 protip_boxlabel_str(lang::Lang) where {Lang <: AbstractLanguage} = @error "Please define a translation."
 almost_str(lang::Lang) where {Lang <: AbstractLanguage} = @error "Please define a translation."
 warning_box_str(lang::Lang) where {Lang <: AbstractLanguage} = @error "Please define a translation."
+question_box_str(lang::Lang) where {Lang <: AbstractLanguage} = @error "Please define a translation."
+keyconcept_str(lang::Lang) where {Lang <: AbstractLanguage} = @error "Please define a translation."
 danger_str(lang::Lang) where {Lang <: AbstractLanguage} = @error "Please define a translation."
 still_missing_str(lang::Lang) where {Lang <: AbstractLanguage} = @error "Please define a translation."
 still_missing_text_str(lang::Lang) where {Lang <: AbstractLanguage} = @error "Please define a translation."
@@ -26,6 +30,7 @@ keep_working_text_str(lang::Lang) where {Lang <: AbstractLanguage} = @error "Ple
 keep_working_update_str(var, lang::Lang) where {Lang <: AbstractLanguage} = @error "Please define a translation."
 yays(lang::Lang) where {Lang <: AbstractLanguage} = @error "Please define a translation."
 correct_str(lang::Lang) where {Lang <: AbstractLanguage} = @error "Please define a translation."
+todo_str(lang::Lang) where {Lang <: AbstractLanguage} = @error "Please define a translation."
 
 check_type_isa_missing_text_str(sym, lang::Lang) where {Lang <: AbstractLanguage} = @error "Please define a translation."
 check_type_isa_wrong_type_text_str(sym, lang::Lang) where {Lang <: AbstractLanguage} = @error "Please define a translation."
@@ -52,6 +57,8 @@ include("english.jl")
 import .PTTEnglish: EnglishUS
 include("german.jl")
 import .PTTGerman: GermanGermany, GermanGermanyFormal, GermanGermanyColloquial
+include("spanish.jl")
+import .PTTSpanish: SpanishES, SpanishFormal, SpanishColloquial
 
 const languages_registered = Ref{Dict{String,AbstractLanguage}}(
         Dict( "en" => PTTEnglish.EnglishUS(),
@@ -59,12 +66,19 @@ const languages_registered = Ref{Dict{String,AbstractLanguage}}(
         "de" => PTTGerman.GermanGermany(),
         "de_colloq" => PTTGerman.GermanGermanyColloquial(),
         "de_de" => PTTGerman.GermanGermany(),
-        "de_de_colloq" => PTTGerman.GermanGermanyColloquial() ))
+        "de_de_colloq" => PTTGerman.GermanGermanyColloquial(),
+              "es" => PTTSpanish.SpanishES(),
+              "es_colloq" => PTTSpanish.SpanishColloquial(),
+              "es_es" => PTTSpanish.SpanishES(),
+              "es_es_colloq" => PTTSpanish.SpanishColloquial(),
+              ))
 
 const language_codes_registered = Ref{Dict{AbstractLanguage,Vector{String}}}(
         Dict( PTTEnglish.EnglishUS() => ["en","en_us"],
         PTTGerman.GermanGermany() => ["de","de_de"],
-        PTTGerman.GermanGermanyColloquial() => ["de_colloq", "de_de_colloq"]
+        PTTGerman.GermanGermanyColloquial() => ["de_colloq", "de_de_colloq"],
+        PTTSpanish.SpanishES() => ["es", "es_es"],
+        PTTSpanish.SpanishColloquial() => ["es_colloq", "es_es_colloq"]
         ))
 
 # Allow users to register additional languages
@@ -101,6 +115,8 @@ function get_language_old(str::AbstractString)
       PTTEnglish.EnglishUS()
    elseif contains(str,r"^de")
       PTTGerman.GermanGermany()
+   elseif contains(str,r"^es")
+       PTTSpanish.SpanishFormal()
    else # Sorry, we don't have your language yet.
       # @info "Sorry, PlutoTeachingTools doesn't include that language."
       PTTEnglish.EnglishUS()

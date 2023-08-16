@@ -2,8 +2,9 @@
 using Random # , Distributions # not sure if we need that
 using Markdown
 using LaTeXStrings
+using HypertextLiteral 
 
-export hint, tip, protip, almost, warning_box, danger 
+export hint, tip, protip, almost, warning_box, question_box, answer_box, danger, keyconcept
 export correct, still_missing, still_nothing, wrong_type
 export var_not_defined, func_not_defined, keep_working
 export not_defined  # deprecated
@@ -11,6 +12,7 @@ export not_defined  # deprecated
 export type_isa, type_eq
 export code_for_check_type_funcs
 export TODO, nbsp
+export blockquote
 export display_msg_if_fail
 
 "Hint box with arguement as text."
@@ -23,11 +25,21 @@ tip(text, lang::AbstractLanguage = default_language[]) = Markdown.MD(Markdown.Ad
 protip(text; lang::AbstractLanguage = default_language[], invite = protip_invite_str(lang), boxlabel = protip_boxlabel_str(lang)) = Foldable(invite, Markdown.MD(Markdown.Admonition("tip", boxlabel, [text])) );
 protip(text, invite, lang::AbstractLanguage = default_language[]; boxlabel = protip_boxlabel_str(lang)) = protip(text; lang, invite, boxlabel);
 
+"Answer box with arguement as text."
+answer_box(text; lang::AbstractLanguage = default_language[], invite = answer_invite_str(lang), boxlabel = answer_boxlabel_str(lang)) = Foldable(invite, Markdown.MD(Markdown.Admonition("answer", boxlabel, [text])) );
+answer_box(text, invite, lang::AbstractLanguage = default_language[]; boxlabel = answer_boxlabel_str(lang)) = answer(text; lang, invite, boxlabel);
+
 "Admonition box labeled a warning with arguement as text."
 almost(text, lang::AbstractLanguage = default_language[]) = Markdown.MD(Markdown.Admonition("warning", almost_str(lang), [text]));
 
-"warning box with arguement as text."
+"Warning box with arguement as text."
 warning_box(text, lang::AbstractLanguage = default_language[]) = Markdown.MD(Markdown.Admonition("warning", warning_box_str(lang), [text]));
+
+"Question box with arguement as text."
+question_box(text, lang::AbstractLanguage = default_language[]) = Markdown.MD(Markdown.Admonition("question", question_box_str(lang), [text]));
+
+"Key concept box with concept name and description as input arguments."
+keyconcept(concept, text, lang::AbstractLanguage = default_language[]) = Markdown.MD(Markdown.Admonition("key-concept", keyconcept_str(lang), [md"**$concept**", text]))
 
 "Danger box with arguement as text."
 danger(text, lang::AbstractLanguage = default_language[]) = Markdown.MD(Markdown.Admonition("danger", danger_str(lang), [text]));
@@ -141,8 +153,48 @@ end
 correct(;lang::AbstractLanguage = default_language[], text=rand(yays(lang))) = Markdown.MD(Markdown.Admonition("correct", correct_str(lang), [text]));
 correct(text, lang::AbstractLanguage = default_language[]) = correct(;lang, text);
 
-TODO_str = html"<span style='display: inline; font-size: 2em; color: purple; font-weight: 900;'>TODO</span>"
-TODO() = TODO_str
+#TODO_str = html"<span style='display: inline; font-size: 2em; color: purple; font-weight: 900;'>TODO</span>"
+#TODO() = TODO_str
+
+"""
+Displays nice TODO graphic inline as an H1 heading (so will show up in PlutoUI's table of contents). 
+Useful for demarcating work-in-progress sections or parts that could be imporved or will be worked on later, etc.
+"""
+function TODO end
+
+TODO(text, lang::AbstractLanguage = default_language[]; heading=todo_str(lang)) = TODO(; lang, text, heading)
+
+function TODO(;lang::AbstractLanguage = default_language[], text = "", heading=todo_str(lang))
+@htl("""
+<div class="todo-tape">
+</div> 
+<div class="todo-tape-content">
+<h1>&#9888; $heading &#9888;</h1>
+<p>$text</p>
+</div> 
+<div class="todo-tape">
+</div> 
+
+
+<style> 
+div.todo-tape {
+padding: 1rem;
+background: repeating-linear-gradient(
+45deg,
+#FFE41E,
+#FFE41E 12px,
+#141617 12px,
+#141617 24px
+);
+}
+
+div.todo-tape-content {
+padding:1.2rem;
+background-color: white;
+}
+</style>
+""")
+end
 
 # Useful strings for embedding in markdown
 nbsp = html"&nbsp;"
@@ -155,3 +207,71 @@ function display_msg_if_fail(x; msg_pass = nothing)
    end 
 end
 
+
+
+"""
+Displays a nice blockquote. Useful for including quotes by well known figures or useful nuggets of wisdom.  
+"""
+function blockquote(text,author="")
+@htl("""
+<div class="nice-blockquote nice-blockquote__bordered nice-blockquote--quoted">
+<p class="nice-blockquote__text">
+$text
+<p>
+<div class="nice-blockquote__text nice-blockquote__text--author">
+$author
+</div> 
+</div> 
+<style> 
+.nice-blockquote{
+padding: 25px;
+background: light grey;
+border: 0.5px solid #ccc;
+color: black;
+box-sizing:border-box;
+overflow-y:hidden;
+}
+.nice-blockquote__bordered{
+border-left-width: 14px;
+}
+.nice-blockquote--quoted::before{
+content:open-quote;
+font-size:70px;
+font-family: Arial;
+font-weight:bold;
+color:#ccc;
+display:block;
+margin-top:-20px;
+margin-bottom:-40px;
+font-family: Arial;
+}
+.nice-blockquote__text{
+font-family: Arial;
+font-style: italic;
+fontsize: 1.5em;	
+margin:0;
+line height: 1.5;
+text-align:left;
+}
+.nice-blockquote__text:not(:last_child){
+margin-bottom:10px;
+}
+.nice-blockquote__text--author{
+font-weight:bold;
+font-style: normal;
+text-align:right;
+fontsize: 2em;
+}
+.nice-blockquote__text--author::before{
+content:close-quote;
+font-size:70px;
+font-family: Arial;
+font-weight:bold;
+color:#ccc;
+display:block;
+margin-top:-28px;
+margin-bottom:-40px;
+}
+</style>
+""")
+end
