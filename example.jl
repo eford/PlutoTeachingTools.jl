@@ -32,6 +32,12 @@ end
 # ╔═╡ dee4aa68-e5eb-4a8a-869f-867e61de5ec5
 using PlutoUI    # Provides widgets like Select
 
+# ╔═╡ ec6b46eb-8051-4ff8-a374-8baa51717f88
+md"""
+!!! info "Accessibility improvements (unreleased)"
+	This version of the package includes fixes from a WCAG 2.1 AA accessibility review: dynamic feedback boxes are announced to screen readers, admonition titles carry a `lang` attribute for the selected language, `blockquote`/`section_outline` colors adapt to light/dark themes, `Columns`/`TwoColumn`/`ThreeColumn` reflow to a single column on narrow screens, and checkboxes show a visible keyboard-focus outline. See `accessibility.md` in the repository for full details, including one return-type change noted below where it applies.
+"""
+
 # ╔═╡ 3f8dc975-b091-4dbe-bd48-c33236e61ece
 using LaTeXStrings
 
@@ -176,6 +182,12 @@ md"""
 ## Some useful boxes
 """
 
+# ╔═╡ a02f3663-af9b-470f-922c-2ca6c188cd37
+md"""
+!!! warning "Return type note"
+	`correct`, `keep_working`, `still_missing`, `still_nothing`, and `wrong_type` now return an HTML object (for the new screen-reader announcement) instead of a `Markdown.MD` object. Displaying them in Pluto works exactly as before; only code that inspects the returned type or splices these into a larger `Markdown.MD(...)` document is affected. See `accessibility.md`.
+"""
+
 # ╔═╡ b48468f0-eeaa-4e1a-ad0b-3cfe42b6ab15
 correct()
 
@@ -296,6 +308,9 @@ section_outline("Example:", "Fancy section outline")
 # ╔═╡ 5a42a1b2-6300-4b81-9784-575b5f9a22ea
 md"""
 You can use the `section_outline` to make a section stand out! In our course, we use this for: "Problem statement" (in red) and "Solution" (in green).
+
+!!! warning "Choose colors with contrast in mind"
+	`color` is mixed with black/white to derive the text color, so a very light or very dark `color` can produce low-contrast text in one theme. See the `section_outline` docstring and `accessibility.md`.
 """
 
 # ╔═╡ cccaff2f-3fa0-45f2-9fa6-cf8a21ade844
@@ -394,6 +409,8 @@ Columns(md"Left col", md"Middle col", md"Right col")
 # ╔═╡ c22f7f6a-171d-4379-86c9-1781875cf0a4
 md"""
 You can customize the widths of the columns.
+
+*Note: columns now automatically stack into a single column on narrow/mobile screens (below 600px wide).*
 """
 
 # ╔═╡ 0e1e62a6-3b78-4415-89fe-fa17279fddbf
@@ -415,6 +432,8 @@ md"""
 # ╔═╡ b1f41633-82fd-4e67-9d57-f66623036417
 md"""
 Add a checkbox to choose to use the full browser window width (e.g., for large plots).
+
+*Note: these checkboxes now show a visible outline when focused via keyboard navigation.*
 """
 
 # ╔═╡ 1f417420-cc7f-4e88-9b2b-05185ff81c31
@@ -1009,6 +1028,7 @@ version = "17.4.0+2"
 # ╟─cd581a51-fb2b-4579-9a7d-0d723ad5d467
 # ╟─9b272420-8ab0-4b8e-9c4f-bf81a56227db
 # ╠═dee4aa68-e5eb-4a8a-869f-867e61de5ec5
+# ╟─ec6b46eb-8051-4ff8-a374-8baa51717f88
 # ╠═f0704e56-7e97-4c92-bbdd-76d7a873e6d8
 # ╟─84ccb960-41f8-430d-bd73-a7c0248cfb95
 # ╟─d6b3f009-22e4-4b21-8986-a29e3f261c3b
@@ -1034,6 +1054,7 @@ version = "17.4.0+2"
 # ╠═480dd2a0-8b37-42fa-855e-cd00fe50e1bb
 # ╟─c2180e12-c37a-461c-812a-80129d73426a
 # ╟─399f5b73-a554-4a98-acad-d4dd516865ad
+# ╟─a02f3663-af9b-470f-922c-2ca6c188cd37
 # ╠═b48468f0-eeaa-4e1a-ad0b-3cfe42b6ab15
 # ╠═cbea3a7b-522d-4f6e-908a-6baec22a9ce3
 # ╠═cf73022f-abfd-407c-bcb4-989b54b5dd03
