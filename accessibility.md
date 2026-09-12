@@ -87,19 +87,10 @@ unsupported browser, the declaration is simply ignored, so borders/text fall bac
 browser-default color rather than causing an error — a graceful but visually different
 degradation.
 
-### Admonition title/body contrast — fixed upstream in Pluto.jl, not here
+### Admonition title/body contrast — PR submitted upstream for Pluto.jl, not here
 
-An earlier version of this package shipped a `!important` CSS override (`admonition_wcag_colors_style`)
-to fix admonition title/body contrast, because Pluto/Julia's `Markdown.html(::Markdown.Admonition)`
-output has no wrapping class or `id` this package controls — only the shared `.admonition.<category>`
-markup — so a downstream per-package CSS override had to fight Pluto's own higher-specificity
-selectors (`pluto-output div.admonition.<category>`) for `hint`/`warning`/`danger`, and would have
-been silently stripped whenever a notebook is viewed via Pluto's `sanitize_html` "safe preview" path
-(which runs cell HTML output through `DOMPurify` with `FORBID_TAGS: ["style"]`).
-
-Rather than maintain that fragile override, the root cause — Pluto's own light-theme admonition
-colors failing AA contrast, and two of its dark-theme body backgrounds failing/marginal — was fixed
-directly in Pluto.jl itself (see https://github.com/fonsp/Pluto.jl, theme files
+Pluto's own admonition colors were failing AA contrast requirements. I PR was submitted
+directly to Pluto.jl itself (see https://github.com/fonsp/Pluto.jl, theme files
 `frontend/themes/{light,dark}.css`). This fixes the problem for every Pluto user and any package
 that emits `Markdown.Admonition` output, not just this one, and doesn't depend on a downstream
 override surviving Pluto's CSS cascade or its sanitizer. Once that fix is merged and released,
