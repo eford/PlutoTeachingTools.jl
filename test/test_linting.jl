@@ -4,6 +4,7 @@ using Test
 using Aqua: Aqua
 using JET: JET
 using ExplicitImports: ExplicitImports
+using Markdown: MD
 
 @testset "Aqua tests" begin
     Aqua.test_all(PlutoTeachingTools; ambiguities=false)
@@ -23,8 +24,8 @@ end
         @test ExplicitImports.check_all_explicit_imports_via_owners(PlutoTeachingTools) ===
             nothing
         # TODO: include test. Currently using non-public `Markdown.Admonition`
-        # @test ExplicitImports.check_all_explicit_imports_are_public(PlutoTeachingTools;) ===
-        #     nothing
+        #@test ExplicitImports.check_all_explicit_imports_are_public(PlutoTeachingTools;) ===
+        #    nothing
     end
     @testset "Improper qualified accesses" begin
         @test ExplicitImports.check_all_qualified_accesses_via_owners(
@@ -33,7 +34,7 @@ end
         @test ExplicitImports.check_no_self_qualified_accesses(PlutoTeachingTools) ===
             nothing
         @test ExplicitImports.check_all_qualified_accesses_are_public(
-            PlutoTeachingTools
+		      PlutoTeachingTools; ignore = (:MD, ) #, Markdown.:MD, :(Markdown.MD) )
         ) === nothing
     end
 end
