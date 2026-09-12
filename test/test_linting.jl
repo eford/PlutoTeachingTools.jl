@@ -10,7 +10,7 @@ using ExplicitImports: ExplicitImports
 end
 
 @testset "JET tests" begin
-    JET.test_package(PlutoTeachingTools; target_defined_modules=true)
+	JET.test_package(PlutoTeachingTools; target_modules=(PlutoTeachingTools,))
 end
 
 @testset "ExplicitImports tests" begin
